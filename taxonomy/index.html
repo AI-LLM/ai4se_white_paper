@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>软件类型象限</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { width: 100vw; height: 100vh; overflow: hidden; background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); font-family: 'Segoe UI', system-ui, sans-serif; }
+#canvas { width: 100%; height: 100%; cursor: grab; }
+#title { position: absolute; top: 16px; left: 24px; color: #e2e8f0; }
+#title h1 { font-size: 22px; font-weight: 700; letter-spacing: -0.5px; }
+#title p { font-size: 13px; color: #94a3b8; margin-top: 4px; }
+#axes { position: absolute; bottom: 20px; left: 24px; display: flex; flex-direction: column; gap: 6px; }
+.axis-row { display: flex; align-items: center; gap: 8px; }
+.axis-bar { width: 28px; height: 3px; border-radius: 2px; }
+.axis-label { font-size: 12px; font-weight: 600; }
+.axis-desc { font-size: 12px; color: #94a3b8; }
+#legend { position: absolute; top: 16px; right: 20px; display: flex; flex-direction: column; gap: 4px; background: rgba(15,23,42,0.75); backdrop-filter: blur(8px); border-radius: 10px; padding: 12px 14px; border: 1px solid rgba(148,163,184,0.15); }
+.legend-item { display: flex; align-items: center; gap: 8px; transition: opacity 0.2s; }
+.legend-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+.legend-text { color: #e2e8f0; font-size: 11.5px; white-space: nowrap; }
+#tooltip { position: absolute; z-index: 20; background: rgba(15,23,42,0.92); backdrop-filter: blur(12px); border-radius: 10px; padding: 10px 14px; max-width: 220px; pointer-events: none; display: none; }
+#tooltip .tt-name { font-weight: 700; font-size: 14px; margin-bottom: 4px; }
+#tooltip .tt-desc { color: #cbd5e1; font-size: 11.5px; line-height: 1.5; }
+#tooltip .tt-coord { color: #64748b; font-size: 10.5px; margin-top: 6px; font-family: monospace; }
+</style>
+</head>
+<body>
+<div id="title"><h1>软件类型象限</h1><p>拖拽旋转 · 悬停查看详情</p></div>
+<div id="axes">
+  <div class="axis-row"><div class="axis-bar" style="background:#ff4466"></div><span class="axis-label" style="color:#fca5a5">X 轴 →</span><span class="axis-desc">规则已知度 (低→高) / 变化频繁度 (高→低)</span></div>
+  <div class="axis-row"><div class="axis-bar" style="background:#44cc66"></div><span class="axis-label" style="color:#86efac">Y 轴 →</span><span class="axis-desc">确定性规则的量 (少→多)</span></div>
+  <div class="axis-row"><div class="axis-bar" style="background:#4488ff"></div><span class="axis-label" style="color:#93c5fd">Z 轴 ↑</span><span class="axis-desc">问题求解搜索空间 (小→大)</span></div>
+</div>
+<div id="legend"></div>
+<div id="tooltip"><div class="tt-name"></div><div class="tt-desc"></div><div class="tt-coord"></div></div>
+<canvas id="canvas"></canvas>
+
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
+<script>
+const ITEMS = [
+  { name:"大型管理软件 (ERP)", x:0.7, y:0.85, z:0.15, color:"#4f8cff", desc:"规则已知度高 · 规则量大 · 搜索空间小" },
+  { name:"AlphaGo", x:1.0, y:0.01, z:0.95, color:"#a855f7", desc:"规则完全已知 · 规则量极少 · 搜索空间极大" },
+  { name:"AlphaFold", x:0.9, y:0.1, z:0.95, color:"#c084fc", desc:"规则高度已知 · 规则量少 · 搜索空间极大" },
+  { name:"GPU算子生成/优化", x:0.95, y:0.1, z:0.95, color:"#7c3aed", desc:"规则高度已知 · 规则量少 · 搜索空间极大" },
+  { name:"单网页游戏", x:0.7, y:0.15, z:0.05, color:"#22d3ee", desc:"规则较已知 · 规则量少 · 搜索空间极小" },
+  { name:"复杂云应用", x:0.4, y:0.5, z:0.15, color:"#aad3ee", desc:"规则易变化 · 规则量中等 · 搜索空间极小" },
+];
+
+const S = 2;
+const toWorld = (dx,dy,dz) => new THREE.Vector3(dx*S, dz*S, dy*S);
+
+// Legend
+const legendEl = document.getElementById('legend');
+ITEMS.forEach((it,i) => {
+  const d = document.createElement('div'); d.className='legend-item'; d.dataset.idx=i;
+  d.innerHTML=`<div class="legend-dot" style="background:${it.color};box-shadow:0 0 6px ${it.color}55"></div><span class="legend-text">${it.name}</span>`;
+  legendEl.appendChild(d);
+});
+
+// Three.js setup
+const canvas = document.getElementById('canvas');
+const renderer = new THREE.WebGLRenderer({ canvas, antialias:true, alpha:true });
+renderer.setPixelRatio(Math.min(devicePixelRatio,2));
+renderer.setSize(innerWidth, innerHeight);
+
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(42, innerWidth/innerHeight, 0.1, 100);
+const R = 4.8;
+const ang = { theta:-0.6, phi:0.8 };
+const cx=1, cy=0.9, cz=1;
+
+function updateCam(){
+  camera.position.set(cx+R*Math.sin(ang.phi)*Math.sin(ang.theta), cy+R*Math.cos(ang.phi), cz+R*Math.sin(ang.phi)*Math.cos(ang.theta));
+  camera.lookAt(cx,cy,cz);
+}
+updateCam();
+
+scene.add(new THREE.AmbientLight(0xffffff,0.6));
+const dl=new THREE.DirectionalLight(0xffffff,0.8); dl.position.set(5,8,5); scene.add(dl);
+
+// Grid planes
+const gm=(c)=>new THREE.MeshBasicMaterial({color:c,transparent:true,opacity:0.06,side:THREE.DoubleSide});
+const pg=new THREE.PlaneGeometry(S,S);
+
+const p1=new THREE.Mesh(pg,gm(0x4488ff)); p1.rotation.x=-Math.PI/2; p1.position.set(S/2,0,S/2); scene.add(p1);
+const p2=new THREE.Mesh(pg,gm(0x44ff88)); p2.position.set(S/2,S/2,0); scene.add(p2);
+const p3=new THREE.Mesh(pg,gm(0xff8844)); p3.rotation.y=Math.PI/2; p3.position.set(0,S/2,S/2); scene.add(p3);
+
+// Grid lines
+const glm=new THREE.LineBasicMaterial({color:0x888888,transparent:true,opacity:0.15});
+const div=4;
+for(let i=0;i<=div;i++){
+  const t=i/div*S;
+  [[t,0,0,t,0,S],[0,0,t,S,0,t],[t,0,0,t,S,0],[0,t,0,S,t,0],[0,t,0,0,t,S],[0,0,t,0,S,t]].forEach(p=>{
+    const g=new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(p[0],p[1],p[2]),new THREE.Vector3(p[3],p[4],p[5])]);
+    scene.add(new THREE.Line(g,glm));
+  });
+}
+
+// Axes
+[{d:[S,0,0],c:0xff4466,r:[0,0,-Math.PI/2]},{d:[0,0,S],c:0x44cc66,r:[Math.PI/2,0,0]},{d:[0,S,0],c:0x4488ff,r:[0,0,0]}].forEach(({d,c,r})=>{
+  const m=new THREE.LineBasicMaterial({color:c,linewidth:2});
+  scene.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(0,0,0),new THREE.Vector3(...d)]),m));
+  const a=new THREE.Mesh(new THREE.ConeGeometry(0.04,0.12,8),new THREE.MeshStandardMaterial({color:c}));
+  a.position.set(...d); a.rotation.set(...r); scene.add(a);
+});
+
+// Y=0.3 cutting plane
+const cutWZ=0.3*S;
+const cpg=new THREE.PlaneGeometry(S,S);
+const cpm=new THREE.MeshBasicMaterial({color:0xfbbf24,transparent:true,opacity:0.12,side:THREE.DoubleSide});
+const cp=new THREE.Mesh(cpg,cpm); cp.position.set(S/2,S/2,cutWZ); scene.add(cp);
+
+const cbg=new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(0,0,cutWZ),new THREE.Vector3(S,0,cutWZ),new THREE.Vector3(S,S,cutWZ),new THREE.Vector3(0,S,cutWZ),new THREE.Vector3(0,0,cutWZ)]);
+const cbl=new THREE.Line(cbg,new THREE.LineDashedMaterial({color:0xfbbf24,transparent:true,opacity:0.45,dashSize:0.08,gapSize:0.04}));
+cbl.computeLineDistances(); scene.add(cbl);
+
+// Vibe coding label
+function makeSprite(text,opts={}){
+  const c=document.createElement('canvas');
+  const sz=opts.fontSize||28; const lines=text.split('\n');
+  c.width=opts.width||512; c.height=opts.height||(sz+8)*lines.length+16;
+  const x=c.getContext('2d');
+  x.font=`${opts.bold?'bold ':''}${sz}px "Segoe UI",system-ui,sans-serif`;
+  x.fillStyle=opts.color||'#e2e8f0'; x.textAlign='center'; x.textBaseline='middle';
+  lines.forEach((l,i)=>x.fillText(l,c.width/2,(sz+8)*i+sz/2+8));
+  const t=new THREE.CanvasTexture(c); t.minFilter=THREE.LinearFilter;
+  const m=new THREE.SpriteMaterial({map:t,transparent:true,opacity:opts.opacity||0.9,depthTest:false});
+  const s=new THREE.Sprite(m); const sc=opts.scale||0.5;
+  s.scale.set((c.width/c.height)*sc,sc,1); return s;
+}
+
+const vl=makeSprite("Y较小\n适合 vibe coding——新的抽象层次",{fontSize:30,color:"#fde68a",scale:0.45,width:512,height:120});
+vl.position.set(-0.35,0.15,cutWZ/2); scene.add(vl);
+
+const bm=new THREE.LineBasicMaterial({color:0xfbbf24,transparent:true,opacity:0.6});
+const bx=-0.08;
+scene.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(bx,0,0),new THREE.Vector3(bx-0.06,0,0),new THREE.Vector3(bx-0.06,0,cutWZ),new THREE.Vector3(bx,0,cutWZ)]),bm));
+
+// Cuboid: 过程抽象 (x<0.5, y<0.6, z<0.5)
+{
+  const x0=0.5, x1=1, y0=0, y1=0.6, z0=0, z1=0.5;
+  const wx=x0*S, wy=z0*S, wz=y0*S, wx2=x1*S, wy2=z1*S, wz2=y1*S;
+  const cw=wx2-wx, ch=wy2-wy, cd=wz2-wz;
+  const geo=new THREE.BoxGeometry(cw,ch,cd);
+  const mat=new THREE.MeshBasicMaterial({color:0x22d3ee,transparent:true,opacity:0.08,side:THREE.DoubleSide,depthWrite:false});
+  const box=new THREE.Mesh(geo,mat);
+  box.position.set(wx+cw/2, wy+ch/2, wz+cd/2);
+  scene.add(box);
+  const edges=new THREE.EdgesGeometry(geo);
+  const line=new THREE.LineSegments(edges,new THREE.LineBasicMaterial({color:0x22d3ee,transparent:true,opacity:0.35}));
+  line.position.copy(box.position);
+  scene.add(line);
+  const lb=makeSprite("过程抽象",{fontSize:24,color:"#22d3ee",scale:0.4,width:256,height:48});
+  lb.position.set(wx+cw/2, wy2+0.12, wz+cd/2);
+  scene.add(lb);
+}
+
+// Cuboid: 对象抽象 (x>0, y>0.4, z<0.5)
+{
+  const x0=0, x1=1, y0=0.4, y1=1, z0=0, z1=0.5;
+  const wx=x0*S, wy=z0*S, wz=y0*S, wx2=x1*S, wy2=z1*S, wz2=y1*S;
+  const cw=wx2-wx, ch=wy2-wy, cd=wz2-wz;
+  const geo=new THREE.BoxGeometry(cw,ch,cd);
+  const mat=new THREE.MeshBasicMaterial({color:0xa855f7,transparent:true,opacity:0.08,side:THREE.DoubleSide,depthWrite:false});
+  const box=new THREE.Mesh(geo,mat);
+  box.position.set(wx+cw/2, wy+ch/2, wz+cd/2);
+  scene.add(box);
+  const edges=new THREE.EdgesGeometry(geo);
+  const line=new THREE.LineSegments(edges,new THREE.LineBasicMaterial({color:0xa855f7,transparent:true,opacity:0.35}));
+  line.position.copy(box.position);
+  scene.add(line);
+  const lb=makeSprite("对象抽象",{fontSize:24,color:"#a855f7",scale:0.4,width:256,height:48});
+  lb.position.set(wx+cw/2, wy2+0.12, wz+cd/2);
+  scene.add(lb);
+}
+
+// Data spheres
+const spheres=[];
+ITEMS.forEach((item,idx)=>{
+  const geo=new THREE.SphereGeometry(0.06,16,16);
+  const mat=new THREE.MeshStandardMaterial({color:item.color,emissive:item.color,emissiveIntensity:0.3,metalness:0.2,roughness:0.5});
+  const m=new THREE.Mesh(geo,mat);
+  const wp=toWorld(item.x,item.y,item.z); m.position.copy(wp); m.userData={index:idx};
+  scene.add(m); spheres.push(m);
+
+  const dg=new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(wp.x,0,wp.z),new THREE.Vector3(wp.x,wp.y,wp.z)]);
+  const dm=new THREE.LineDashedMaterial({color:item.color,transparent:true,opacity:0.3,dashSize:0.05,gapSize:0.03});
+  const dl2=new THREE.Line(dg,dm); dl2.computeLineDistances(); scene.add(dl2);
+
+  const sg=new THREE.SphereGeometry(0.03,8,8);
+  const sm=new THREE.MeshBasicMaterial({color:item.color,transparent:true,opacity:0.25});
+  const sh=new THREE.Mesh(sg,sm); sh.position.set(wp.x,0,wp.z); scene.add(sh);
+});
+
+// Interaction
+const raycaster=new THREE.Raycaster();
+const mouse=new THREE.Vector2();
+let dragging=false, prevX=0, prevY=0, hovIdx=null;
+const tooltip=document.getElementById('tooltip');
+const legendItems=document.querySelectorAll('.legend-item');
+
+canvas.addEventListener('mousedown',e=>{dragging=true;prevX=e.clientX;prevY=e.clientY;canvas.style.cursor='grabbing';});
+window.addEventListener('mouseup',()=>{dragging=false;canvas.style.cursor='grab';});
+
+canvas.addEventListener('mousemove',e=>{
+  const rect=canvas.getBoundingClientRect();
+  mouse.x=((e.clientX-rect.left)/rect.width)*2-1;
+  mouse.y=-((e.clientY-rect.top)/rect.height)*2+1;
+
+  if(dragging){
+    ang.theta-=(e.clientX-prevX)*0.005;
+    ang.phi=Math.max(0.2,Math.min(Math.PI-0.2,ang.phi+(e.clientY-prevY)*0.005));
+    prevX=e.clientX;prevY=e.clientY;updateCam();
+  }
+
+  raycaster.setFromCamera(mouse,camera);
+  const hits=raycaster.intersectObjects(spheres);
+  if(hits.length>0){
+    const idx=hits[0].object.userData.index;
+    hovIdx=idx;
+    const it=ITEMS[idx];
+    tooltip.style.display='block';
+    tooltip.style.left=Math.min(e.clientX-rect.left+16,rect.width-240)+'px';
+    tooltip.style.top=(e.clientY-rect.top-10)+'px';
+    tooltip.style.border=`1px solid ${it.color}66`;
+    tooltip.style.boxShadow=`0 4px 24px ${it.color}22`;
+    tooltip.querySelector('.tt-name').style.color=it.color;
+    tooltip.querySelector('.tt-name').textContent=it.name;
+    tooltip.querySelector('.tt-desc').textContent=it.desc;
+    tooltip.querySelector('.tt-coord').textContent=`x=${it.x.toFixed(2)} y=${it.y.toFixed(2)} z=${it.z.toFixed(2)}`;
+    canvas.style.cursor='pointer';
+    legendItems.forEach((el,i)=>el.style.opacity=i===idx?'1':'0.35');
+  } else {
+    hovIdx=null;
+    tooltip.style.display='none';
+    if(!dragging) canvas.style.cursor='grab';
+    legendItems.forEach(el=>el.style.opacity='1');
+  }
+});
+
+// Animate
+function animate(){
+  requestAnimationFrame(animate);
+  spheres.forEach((s,i)=>{
+    const isH=hovIdx===i;
+    s.scale.setScalar(isH?1.6+Math.sin(Date.now()*0.005)*0.3:1);
+    s.material.emissiveIntensity=isH?0.7:0.3;
+  });
+  renderer.render(scene,camera);
+}
+animate();
+
+window.addEventListener('resize',()=>{
+  camera.aspect=innerWidth/innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(innerWidth,innerHeight);
+});
+</script>
+</body>
+</html>
