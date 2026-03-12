@@ -9,7 +9,8 @@ block-beta
     C["算法+数据结构+数据"]:3
     D<["<a href='https://ai-llm.github.io/ai4se_white_paper/taxonomy/index.html'>分类法</a>"]>(right)
     E["cloud app"]:3
-    F["AlphaX"]:3
+    F1["AI应用软件"]:2
+    F2["AlphaX"]:1
     G<["基本UI智能"]>(right):1
     H["代码检索、解释"]:3
     I["代码补全、编辑"]:3
