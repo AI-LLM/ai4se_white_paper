@@ -29,7 +29,7 @@ body { width: 100vw; height: 100vh; overflow: hidden; background: linear-gradien
 <body>
 <div id="title"><h1>软件类型象限</h1><p>拖拽旋转 · 悬停查看详情</p></div>
 <div id="axes">
-  <div class="axis-row"><div class="axis-bar" style="background:#ff4466"></div><span class="axis-label" style="color:#fca5a5">X 轴 →</span><span class="axis-desc">规则已知度 (低→高) / 变化频繁度 (高→低)</span></div>
+  <div class="axis-row"><div class="axis-bar" style="background:#ff4466"></div><span class="axis-label" style="color:#fca5a5">X 轴 →</span><span class="axis-desc">规则已知度 (高→低) / 变化频繁度 (低→高)</span></div>
   <div class="axis-row"><div class="axis-bar" style="background:#44cc66"></div><span class="axis-label" style="color:#86efac">Y 轴 →</span><span class="axis-desc">确定性规则的量 (少→多)</span></div>
   <div class="axis-row"><div class="axis-bar" style="background:#4488ff"></div><span class="axis-label" style="color:#93c5fd">Z 轴 ↑</span><span class="axis-desc">问题求解搜索空间 (小→大)</span></div>
 </div>
@@ -40,12 +40,13 @@ body { width: 100vw; height: 100vh; overflow: hidden; background: linear-gradien
 <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
 <script>
 const ITEMS = [
-  { name:"大型管理软件 (ERP)", x:0.7, y:0.85, z:0.15, color:"#4f8cff", desc:"规则已知度高 · 规则量大 · 搜索空间小" },
-  { name:"AlphaGo", x:1.0, y:0.01, z:0.95, color:"#a855f7", desc:"规则完全已知 · 规则量极少 · 搜索空间极大" },
-  { name:"AlphaFold", x:0.9, y:0.1, z:0.95, color:"#c084fc", desc:"规则高度已知 · 规则量少 · 搜索空间极大" },
-  { name:"GPU算子生成/优化", x:0.95, y:0.1, z:0.95, color:"#7c3aed", desc:"规则高度已知 · 规则量少 · 搜索空间极大" },
-  { name:"单网页游戏", x:0.7, y:0.15, z:0.05, color:"#22d3ee", desc:"规则较已知 · 规则量少 · 搜索空间极小" },
-  { name:"复杂云应用", x:0.4, y:0.5, z:0.15, color:"#aad3ee", desc:"规则易变化 · 规则量中等 · 搜索空间极小" },
+  { name:"大型管理软件 (ERP)", x:0.3, y:0.85, z:0.15, color:"#4f8cff", desc:"规则已知度高 · 规则量大 · 搜索空间小" },
+  { name:"AlphaGo", x:0.0, y:0.01, z:0.95, color:"#a855f7", desc:"规则完全已知 · 规则量极少 · 搜索空间极大" },
+  { name:"AlphaFold", x:0.1, y:0.1, z:0.95, color:"#c084fc", desc:"规则高度已知 · 规则量少 · 搜索空间极大" },
+  { name:"GPU算子生成/优化", x:0.05, y:0.1, z:0.95, color:"#7c3aed", desc:"规则高度已知 · 规则量少 · 搜索空间极大" },
+  { name:"单网页游戏", x:0.3, y:0.15, z:0.05, color:"#22d3ee", desc:"规则较已知 · 规则量少 · 搜索空间极小" },
+  { name:"复杂云应用", x:0.6, y:0.5, z:0.15, color:"#aad3ee", desc:"规则易变化 · 规则量中等 · 搜索空间极小" },
+  { name:"通用Agent", x:0.95, y:0.25, z:0.95, color:"#ef4444", desc:"规则未知 · 规则量较少 · 搜索空间极大" },
 ];
 
 const S = 2;
@@ -141,7 +142,7 @@ scene.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints([new THREE.Vec
 
 // Cuboid: 过程抽象 (x<0.5, y<0.6, z<0.5)
 {
-  const x0=0.5, x1=1, y0=0, y1=0.6, z0=0, z1=0.5;
+  const x0=0, x1=0.5, y0=0, y1=0.6, z0=0, z1=0.5;
   const wx=x0*S, wy=z0*S, wz=y0*S, wx2=x1*S, wy2=z1*S, wz2=y1*S;
   const cw=wx2-wx, ch=wy2-wy, cd=wz2-wz;
   const geo=new THREE.BoxGeometry(cw,ch,cd);
