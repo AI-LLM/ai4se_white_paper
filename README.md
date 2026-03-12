@@ -11,8 +11,8 @@ block-beta
     E["cloud app"]:3
     F["AlphaX"]:3
     G<["基本UI智能"]>(right):1
-    H["代码检索"]:3
-    I["代码编辑"]:3
+    H["代码检索、解释"]:3
+    I["代码补全、编辑"]:3
     comment1["类比文本终端到IDE的改进"]
     style comment1 fill:rgb(0,0,0,0),stroke:rgb(0,0,0,0),stroke-width:0
     K["摘要"]:2
