@@ -1,6 +1,6 @@
 # AISMM
 
-## 框架
+## 分析框架
 ```mermaid
 block-beta
   columns 7
