@@ -205,6 +205,18 @@ const legendItems=document.querySelectorAll('.legend-item');
 canvas.addEventListener('mousedown',e=>{dragging=true;prevX=e.clientX;prevY=e.clientY;canvas.style.cursor='grabbing';});
 window.addEventListener('mouseup',()=>{dragging=false;canvas.style.cursor='grab';});
 
+canvas.addEventListener('touchstart',e=>{e.preventDefault();dragging=true;prevX=e.touches[0].clientX;prevY=e.touches[0].clientY;},{passive:false});
+window.addEventListener('touchend',()=>{dragging=false;});
+canvas.addEventListener('touchmove',e=>{
+  e.preventDefault();
+  if(dragging&&e.touches.length===1){
+    const tx=e.touches[0].clientX, ty=e.touches[0].clientY;
+    ang.theta-=(tx-prevX)*0.005;
+    ang.phi=Math.max(0.2,Math.min(Math.PI-0.2,ang.phi+(ty-prevY)*0.005));
+    prevX=tx;prevY=ty;updateCam();
+  }
+},{passive:false});
+
 canvas.addEventListener('mousemove',e=>{
   const rect=canvas.getBoundingClientRect();
   mouse.x=((e.clientX-rect.left)/rect.width)*2-1;
