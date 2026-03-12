@@ -7,7 +7,7 @@ block-beta
     A<["方法论"]>(right):1
     B["新抽象层"]:3
     C["算法+数据结构+数据"]:3
-    D<["<a href='taxonomy/index.html'>分类法</a>"]>(right)
+    D<["<a href='https://ai-llm.github.io/ai4se_white_paper/taxonomy/index.html'>分类法</a>"]>(right)
     E["cloud app"]:3
     F["AlphaX"]:3
     G<["基本UI智能"]>(right):1
