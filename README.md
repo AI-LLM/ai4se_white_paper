@@ -6,7 +6,8 @@ block-beta
   columns 7
 
     A<["方法论"]>(right):1
-    B["新抽象层"]:3
+    B1["新抽象层"]:2
+    B2["新角色"]:1
     C["算法+数据结构+数据"]:3
     D<["<a href='https://ai-llm.github.io/ai4se_white_paper/taxonomy/index.html'>分类法</a>"]>(right)
     E["Non-AI Cloud App"]:3
