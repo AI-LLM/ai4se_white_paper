@@ -13,7 +13,8 @@ block-beta
     G<["基本UI智能"]>(right):1
     H["代码检索"]:3
     I["代码编辑"]:3
-    space:1
+    comment1["类比文本终端到IDE的改进"]
+    style comment1 fill:rgb(0,0,0,0),stroke:rgb(0,0,0,0),stroke-width:0
     K["摘要"]:2
     J["模式匹配"]:2
     L["转译"]:2
