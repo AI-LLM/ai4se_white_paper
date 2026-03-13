@@ -10,9 +10,11 @@ block-beta
       B2["新角色"]:1
     end
     block:groupC:3
-      C1["数据+'算法+数据结构'"]:1
-      C2["通用基础模型+Harness engineering"]:1
-      C3["垂直模型"]:1
+      columns 2
+      C21["通用基础模型"]
+      C22["垂直模型"]
+      C11["数据+'算法+数据结构'"]
+      C12["Harness engineering"]
     end
     D<["<a href='https://ai-llm.github.io/ai4se_white_paper/taxonomy/index.html'>分类法</a>"]>(right)
     block:groupE:3
