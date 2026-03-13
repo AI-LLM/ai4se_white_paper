@@ -93,7 +93,7 @@ Wei et al.（2022）对涌现能力的形式化定义为：如果一个能力在
 
 **能力发现框架**。综合研究建议采用五步流程：探索阶段（跨模型规模运行对比实验）→验证阶段（可复现测试、分阶段发布、评估生产稳定性）→风险评估（识别有害涌现行为、部署防护栏）→集成阶段（监控性能、追踪回归、构建持续评估套件）→治理（记录行为和限制、维持利益相关方一致）。
 
-**迭代式KPI定义**。McKinsey（2024）观察到生成式AI产品的功能定义、原型开发和测试全部在并行且前所未有地快速进行。AI项目的KPI定义本身就是一个迭代过程——初始KPI包含假设，需要在实践中逐步验证和更新。
+**迭代式KPI定义**。McKinsey（2025）观察到生成式AI产品的功能定义、原型开发和测试全部在并行且前所未有地快速进行。AI项目的KPI定义本身就是一个迭代过程——初始KPI包含假设，需要在实践中逐步验证和更新。
 
 ### 1.5 用户体验需求的特殊性
 
@@ -118,7 +118,6 @@ AI应用的非功能性需求维度远比传统软件复杂，建议按以下分
 **安全类NFR**：有害响应率（将辱骂性或欺骗性响应转化为可量化的功能指标）、对抗性攻击抵御能力、PII泄露率、提示注入防御率（Filev, 2025）。
 
 **运维类NFR**：可观测性（日志、监控、漂移检测）、可维护性（模型重训练流水线、版本管理）、模型可替换性（更换底层模型时的回归测试覆盖率）。
-
 
 ---
 
@@ -238,3 +237,6 @@ AI应用的非功能性需求维度远比传统软件复杂，建议按以下分
 
 33. **Cloudflare / Anthropic Patterns** — Agent设计模式实现参考.
     https://github.com/cloudflare/agents/blob/main/guides/anthropic-patterns/README.md
+
+34. **McKinsey** (2025). "How an AI-enabled Software Product Development Life Cycle Will Fuel Innovation."
+    https://www.mckinsey.com/industries/technology-media-and-telecommunications/our-insights/how-an-ai-enabled-software-product-development-life-cycle-will-fuel-innovation
