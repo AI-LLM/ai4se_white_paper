@@ -14,7 +14,7 @@ block-beta
       C2["通用基础模型+Harness engineering"]:1
       C3["垂直模型"]:1
     end
-    D<["分类法"]>(right)
+    D<["<a href='https://ai-llm.github.io/ai4se_white_paper/taxonomy/index.html'>分类法</a>"]>(right)
     block:groupE:3
       E2["非AI系统软件"]:1
       E1["Non-AI Cloud App"]:2
