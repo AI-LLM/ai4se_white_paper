@@ -32,7 +32,7 @@ SDLC](https://www.linkedin.com/pulse/why-generative-ai-features-dont-fit-traditi
 
 #### 目标分析框架
 
-基于KAOS（Keep All Objectives Satisfied）目标建模方法，结合2025年最新的AI需求工程研究（Alrajeh et al., 2025），建议将AI应用需求组织为以下**六类目标**：
+基于KAOS（Keep All Objectives Satisfied）目标建模方法，结合2025年最新的AI需求工程研究（Alrajeh et al., 2025），建议将AI应用需求组织为以下**七类目标**：
 
 **目标A：已知工作自动化（效率目标）**
 - A1 减少人工劳动——可量化：节省时间、降低成本
