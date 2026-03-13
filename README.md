@@ -4,18 +4,25 @@
 ```mermaid
 block-beta
   columns 7
-
     A<["方法论"]>(right):1
-    B1["新抽象层"]:2
-    B2["新角色"]:1
-    C1["数据+’算法+数据结构‘"]:1
-    C2["通用基础模型+Harness engineering"]:1
-    C3["垂直模型"]:1
-    D<["<a href='https://ai-llm.github.io/ai4se_white_paper/taxonomy/index.html'>分类法</a>"]>(right)
-    E2["非AI系统软件"]:1
-    E1["Non-AI Cloud App"]:2
-    F1["AI应用软件"]:2
-    F2["AlphaX"]:1
+    block:groupB:3
+      B1["新抽象层"]:2
+      B2["新角色"]:1
+    end
+    block:groupC:3
+      C1["数据+'算法+数据结构'"]:1
+      C2["通用基础模型+Harness engineering"]:1
+      C3["垂直模型"]:1
+    end
+    D<["分类法"]>(right)
+    block:groupE:3
+      E2["非AI系统软件"]:1
+      E1["Non-AI Cloud App"]:2
+    end
+    block:groupF:3
+      F1["AI应用软件"]:2
+      F2["AlphaX"]:1
+    end
     G<["基本UI智能"]>(right):1
     H["代码检索、解释"]:3
     I["代码补全、编辑"]:3
@@ -24,6 +31,10 @@ block-beta
     K["摘要"]:2
     J["模式匹配"]:2
     L["转译"]:2
+    style groupB fill:#4a90d9,color:#fff
+    style groupE fill:#4a90d9,color:#fff
+    style groupC fill:#00bcd4,color:#fff
+    style groupF fill:#00bcd4,color:#fff
 ```
 
 ## AI4SE White Paper
