@@ -10,7 +10,8 @@ block-beta
     B2["新角色"]:1
     C["算法+数据结构+数据"]:3
     D<["<a href='https://ai-llm.github.io/ai4se_white_paper/taxonomy/index.html'>分类法</a>"]>(right)
-    E["Non-AI Cloud App"]:3
+    E1["Non-AI Cloud App"]:2
+    E2["非AI系统软件"]:1
     F1["AI应用软件"]:2
     F2["AlphaX"]:1
     G<["基本UI智能"]>(right):1
