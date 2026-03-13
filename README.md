@@ -6,11 +6,14 @@ block-beta
   columns 7
     A<["方法论"]>(right):1
     block:groupB:3
-      B1["新抽象层"]:2
+      columns 2
+      m1(("<a href='meth-nonai.md'>1</a>")) space
+      B1["新抽象层"]:1
       B2["新角色"]:1
     end
     block:groupC:3
       columns 2
+      m2(("<a href='meth-ai.md'>2</a>")) space
       C21["通用基础模型"]
       C22["垂直模型"]
       C11["数据+'算法+数据结构'"]
