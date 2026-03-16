@@ -1,5 +1,14 @@
 # AISMM
 
+## 定义研究的问题和范围
+
+1️⃣最近看到什么事❌
+比谁看到的更多更全面？
+
+2️⃣在具体问题上用具体AI方案能做到什么效果
+[机器学习适用性（Suitability for Machine Learning, SML）指标](SML-report.md)没有及时更新的具体的AI方案①，O*NET也没有针对特定软件类型的操作粒度②。
+分类细化①，可以对应到评测数据集，对①进行Eval。
+
 ## 分析框架
 ```mermaid
 block-beta
