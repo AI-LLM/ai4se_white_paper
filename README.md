@@ -6,6 +6,9 @@
 
 比谁看到的更多更全面？
 
+总结成功经验和规律？还没有经验经过时间考验可以称之为“成功”。比如Claude code的设计外界做各种解读，[实际都是为了以最简单的方式开始探索](https://www.youtube.com/watch?v=PQU9o_5rHC4)，模型还是设计因素贡献更大无从衡量。
+
+
 2️⃣在具体问题上用具体AI方案能做到什么效果
 
 [机器学习适用性（Suitability for Machine Learning, SML）指标](reference/SML-report.md)没有及时更新的具体的AI方案①，O*NET也没有针对特定软件类型的操作粒度②。
