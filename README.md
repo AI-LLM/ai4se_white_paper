@@ -19,7 +19,7 @@
 
 类似CMMI（能力成熟度模型集成）评价人类组织，现在要评价AI或人类+AI。ISO/IEC 12207 与 15288（生命周期过程）扩展到包含AI的过程。
 
-[Node.js 19000行的PR问题](https://mp.weixin.qq.com/s/-68vDfR-SSCXnu6w_jUkEA)实际上是这个标准问题。
+[Node.js 19000行的PR问题](https://mp.weixin.qq.com/s/-68vDfR-SSCXnu6w_jUkEA)实际上是这个[质量标准问题](reference/genai-quality-model.md)。
 
 ## 分类分析框架
 ```mermaid
