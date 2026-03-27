@@ -15,6 +15,12 @@
 [机器学习适用性（Suitability for Machine Learning, SML）指标](reference/SML-report.md)没有及时更新的具体的AI方案①，O*NET也没有针对特定软件类型的操作粒度②。
 分类细化②——SWE Task Network & Taxonomy，可以对应到评测数据集，对①进行Eval。
 
+3️⃣从流程角度评价AI（为主）生成的软件的质量
+
+类似CMMI（能力成熟度模型集成）评价人类组织，现在要评价AI或人类+AI。ISO/IEC 12207 与 15288（生命周期过程）扩展到包含AI的过程。
+
+[Node.js 19000行的PR问题](https://mp.weixin.qq.com/s/-68vDfR-SSCXnu6w_jUkEA)实际上是这个标准问题。
+
 ## 分类分析框架
 ```mermaid
 block-beta
